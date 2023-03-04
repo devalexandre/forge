@@ -2,9 +2,11 @@ package architecture
 
 import (
 	"fmt"
-	"log"
+
 	"os"
 	"os/exec"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
@@ -28,28 +30,50 @@ var CreateStruct = &cobra.Command{
 
 		err := createMicroserviceArchitecture(name)
 		if err != nil {
-			panic(err)
+			log.Fatalf("Error creating microservice architecture: %v", err)
+			os.Exit(1)
 		}
 
 		log.Printf("Example: %v", examples)
 
-		if !examples {
-			folders := 2
+		if examples {
+			folders := 1
 			count := 0
-			log.Println("Removing examples...")
+			for {
+				if _, err := os.Stat(fmt.Sprintf("%s/default.sh", name)); err == nil {
+					log.Info("Removing default.sh...")
+					removeExample(name + "/default.sh")
+					count++
+				}
+
+				if count == folders {
+					break
+				}
+		}
+
+		if !examples {
+			folders := 3
+			count := 0
+			log.Info("Removing examples...")
 			for {
 
 				//check if internal/infra/mysql and internal/domain/user exists
 
 				if _, err := os.Stat(fmt.Sprintf("%s/internal/infra/mysql", name)); err == nil {
-					log.Println("Removing internal/infra/mysql...")
+					log.Info("Removing internal/infra/mysql...")
 					removeExample(name + "/internal/infra/mysql")
 					count++
 				}
 
 				if _, err := os.Stat(fmt.Sprintf("%s/internal/domain/user", name)); err == nil {
-					log.Println("Removing internal/domain/user...")
+					log.Info("Removing internal/domain/user...")
 					removeExample(name + "/internal/domain/user")
+					count++
+				}
+
+				if _, err := os.Stat(fmt.Sprintf("%s/default.sh", name)); err == nil {
+					log.Info("Removing default.sh...")
+					removeExample(name + "/default.sh")
 					count++
 				}
 
