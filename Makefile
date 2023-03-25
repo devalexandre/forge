@@ -5,7 +5,8 @@ build:
 	rm -rf ./vendor
 	go get ./...
 	go mod vendor
-	env GOOS=linux go build -v -ldflags '-d -s -w' -a -tags netgo -installsuffix netgo -o bin/mscli cmd/main.go
+	env GOOS=linux go build -v -ldflags '-d -s -w' -a -tags netgo -installsuffix netgo -o bin/ms cmd/main.go
+	cp ./bin/ms ~/.local/bin/ms
 
 clean:
 	rm -rf ./bin ./vendor

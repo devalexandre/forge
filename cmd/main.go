@@ -1,8 +1,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/devalexandre/mscli/internal/architecture"
 	"github.com/devalexandre/mscli/internal/create"
 	log "github.com/sirupsen/logrus"
@@ -15,10 +13,10 @@ func Init() {
 
 	// Output to stdout instead of the default stderr
 	// Can be any io.Writer, see below for File example
-	log.SetOutput(os.Stdout)
+	//log.SetOutput(os.Stdout)
 
 	// Only log the warning severity or above.
-	log.SetLevel(log.WarnLevel)
+	//log.SetLevel(log.WarnLevel)
 }
 
 func main() {
@@ -26,6 +24,7 @@ func main() {
 	rootCmd := cobra.Command{Use: "ms"}
 	rootCmd.AddCommand(architecture.Init())
 	rootCmd.AddCommand(create.Init())
+	rootCmd.AddCommand(create.InitAdpters())
 
 	rootCmd.Execute()
 }

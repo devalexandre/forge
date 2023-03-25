@@ -2,14 +2,30 @@ package architecture
 
 import (
 	"fmt"
+	"os/exec"
 
 	"os"
-	"os/exec"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 )
+
+func createMicroserviceArchitecture(projectName string) error {
+	cmd := exec.Command("git", "clone", "git@github.com:devalexandre/golang-ddd-template.git", projectName)
+	return cmd.Run()
+
+}
+
+func removeExample(path string) {
+	log.Printf("removing : %v", path)
+	cmd := exec.Command("rm", "-rf", path)
+	err := cmd.Run()
+	if err != nil {
+		log.Fatalf("Error removing example: %v", err)
+
+	}
+}
 
 func Init() *cobra.Command {
 	CreateStruct.Flags().StringP("name", "n", "", "Name of the microservice architecture")
@@ -34,8 +50,6 @@ var CreateStruct = &cobra.Command{
 			os.Exit(1)
 		}
 
-		log.Printf("Example: %v", examples)
-
 		if examples {
 			folders := 1
 			count := 0
@@ -49,52 +63,34 @@ var CreateStruct = &cobra.Command{
 				if count == folders {
 					break
 				}
+			}
+
 		}
 
 		if !examples {
-			folders := 3
 			count := 0
+			folders := []string{"internal/domain/user", "internal/infra/pgx"}
 			log.Info("Removing examples...")
 			for {
 
 				//check if internal/infra/mysql and internal/domain/user exists
+				for _, folder := range folders {
+					if _, err := os.Stat(fmt.Sprintf("%s/%s", name, folder)); err == nil {
+						log.Printf("Removing %s...", folder)
+						removeExample(name + "/" + folder)
+						count++
+					}
 
-				if _, err := os.Stat(fmt.Sprintf("%s/internal/infra/mysql", name)); err == nil {
-					log.Info("Removing internal/infra/mysql...")
-					removeExample(name + "/internal/infra/mysql")
-					count++
-				}
+					if count == len(folders) {
+						os.Exit(0)
+					}
 
-				if _, err := os.Stat(fmt.Sprintf("%s/internal/domain/user", name)); err == nil {
-					log.Info("Removing internal/domain/user...")
-					removeExample(name + "/internal/domain/user")
-					count++
-				}
-
-				if _, err := os.Stat(fmt.Sprintf("%s/default.sh", name)); err == nil {
-					log.Info("Removing default.sh...")
-					removeExample(name + "/default.sh")
-					count++
-				}
-
-				if count == folders {
-					break
 				}
 
 			}
 
 		}
 
+		fmt.Printf("Microservice architecture created successfully! (%s)", name)
 	},
-}
-
-func createMicroserviceArchitecture(projectName string) error {
-	cmd := exec.Command("git", "clone", "git@github.com:devalexandre/golang-ddd-template.git", projectName)
-	return cmd.Run()
-
-}
-
-func removeExample(path string) {
-	cmd := exec.Command("rm", "-rf", path)
-	cmd.Run()
 }

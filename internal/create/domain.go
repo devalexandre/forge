@@ -1,14 +1,14 @@
 package create
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 func Init() *cobra.Command {
@@ -18,9 +18,9 @@ func Init() *cobra.Command {
 }
 
 var CreateDomain = &cobra.Command{
-	Use:   "domain [flags]",
-	Short: "Create a domain",
-	Long:  "Create a domain",
+	Use:   "create [flags]",
+	Short: "Create a domain, contract, repository, service, factory or mock",
+	Long:  "Create a domain , contract, repository, service, factory or mock",
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
 		tpe, _ := cmd.Flags().GetString("type")
@@ -45,8 +45,32 @@ var CreateDomain = &cobra.Command{
 	},
 }
 
+func updateName(path string, name string) {
+	//update package in all files .go
+
+	src, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	//update package name
+	src = []byte(strings.ReplaceAll(string(src), "user", name))
+	//update struct name
+	src = []byte(strings.ReplaceAll(string(src), "User", strings.Title(name)))
+
+	//update file
+
+	if ioutil.WriteFile(path, src, 0644) != nil {
+		log.Println(err)
+		return
+	}
+
+}
+
 func createDomain(name string) {
 	// check if internal folder exists
+	var paths []string
 	if _, err := os.Stat("./internal"); err != nil {
 		log.Println("You need to be in the root of the project")
 		return
@@ -54,33 +78,39 @@ func createDomain(name string) {
 
 	cmd := exec.Command("mkdir", "-p", "./internal/domain/"+name)
 	cmd.Run()
+
 	//create contract
 	cmd = exec.Command("curl", "-o", "./internal/domain/"+name+"/contracts.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/contracts.go")
 	cmd.Run()
-
+	paths = append(paths, "./internal/domain/"+name+"/contracts.go")
 	//create repository
 	cmd = exec.Command("curl", "-o", "./internal/domain/"+name+"/repository.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/repository.go")
 	cmd.Run()
+	paths = append(paths, "./internal/domain/"+name+"/repository.go")
 
 	//create service
 	cmd = exec.Command("curl", "-o", "./internal/domain/"+name+"/service.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/service.go")
 	cmd.Run()
+	paths = append(paths, "./internal/domain/"+name+"/service.go")
 
 	//create factory
 	cmd = exec.Command("curl", "-o", "./internal/domain/"+name+"/factory.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/factory.go")
 	cmd.Run()
+	paths = append(paths, "./internal/domain/"+name+"/factory.go")
 
 	//mock directory
 	cmd = exec.Command("mkdir", "-p", "./internal/domain/"+name+"/mock")
 	cmd.Run()
 
-	//update package in all files .go
-	cmd = exec.Command("sed", "-i", "s/user/"+name+"/g", "./internal/domain/"+name+"/*.go")
-	cmd.Run()
+	for _, path := range paths {
+		//update package in all files .go
+		updateName(path, name)
+	}
 
-	//update User to name in all files .go
-	cmd = exec.Command("sed", "-i", "s/User/"+strings.Title(name)+"/g", "./internal/domain/"+name+"/*.go")
-	cmd.Run()
+	//update package in all files .go
+
+	fmt.Printf("Domain %s created successfully", name)
+
 }
 
 func createContract(name string) {
@@ -88,14 +118,9 @@ func createContract(name string) {
 	cmd := exec.Command("curl", "-o", "./contracts.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/contracts.go")
 	cmd.Run()
 
-	//update package name user to name
-	cmd = exec.Command("sed", "-i", "s/user/"+name+"/g", "./"+name+"/*.go")
-	cmd.Run()
+	//update package in all files .go
+	updateName("./contracts.go", name)
 
-	//update User to name using case
-	name = cases.Title(language.English, cases.Compact).String(name)
-	cmd = exec.Command("sed", "-i", "s/User/"+name+"/g", "./"+name+"/*.go")
-	cmd.Run()
 }
 
 func createRepository(name string) {
@@ -103,14 +128,8 @@ func createRepository(name string) {
 	cmd := exec.Command("curl", "-o", "./repository.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/repository.go")
 	cmd.Run()
 
-	//update package in all files .go
-	cmd = exec.Command("sed", "-i", "s/user/"+name+"/g", "./"+name+"/*.go")
-	cmd.Run()
+	updateName("./repository.go", name)
 
-	//update User to name using case
-	name = cases.Title(language.English, cases.Compact).String(name)
-
-	cmd = exec.Command("sed", "-i", "s/User/"+name+"/g", "./"+name+"/*.go")
 }
 
 func createService(name string) {
@@ -118,14 +137,7 @@ func createService(name string) {
 	cmd := exec.Command("curl", "-o", "./service.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/service.go")
 	cmd.Run()
 
-	//update package in all files .go
-	cmd = exec.Command("sed", "-i", "s/user/"+name+"/g", "./"+name+"/*.go")
-	cmd.Run()
-
-	//update User to name using case
-	name = cases.Title(language.English, cases.Compact).String(name)
-
-	cmd = exec.Command("sed", "-i", "s/User/"+name+"/g", "./"+name+"/*.go")
+	updateName("./service.go", name)
 }
 
 func createFactory(name string) {
@@ -133,13 +145,7 @@ func createFactory(name string) {
 	cmd := exec.Command("curl", "-o", "./factory.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/factory.go")
 	cmd.Run()
 
-	//update package in all files .go
-	cmd = exec.Command("sed", "-i", "s/user/"+name+"/g", "./"+name+"/*.go")
-	cmd.Run()
-
-	//update User to name in all files .go
-	cmd = exec.Command("sed", "-i", "s/User/"+strings.Title(name)+"/g", "./internal/domain/"+name+"/*.go")
-	cmd.Run()
+	updateName("./factory.go", name)
 }
 
 func createMock(name string) {
@@ -147,11 +153,5 @@ func createMock(name string) {
 	cmd := exec.Command("curl", "-o", "./mock/mock.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/domain/user/mock/mock.go")
 	cmd.Run()
 
-	//update package in all files .go
-	cmd = exec.Command("sed", "-i", "s/user/"+name+"/g", "./mock/*.go")
-	cmd.Run()
-
-	//update User to name in all files .go
-	cmd = exec.Command("sed", "-i", "s/User/"+strings.Title(name)+"/g", "./mock/*.go")
-	cmd.Run()
+	updateName("./mock/mock.go", name)
 }
