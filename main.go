@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/devalexandre/mscli/src/architecture"
-	"github.com/devalexandre/mscli/src/create"
+	"github.com/devalexandre/msgo/src/architecture"
+	"github.com/devalexandre/msgo/src/create"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

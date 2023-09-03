@@ -1,29 +1,34 @@
 # mscli
 Cli for create microservices with golang
 
+## Install
 
-#Commands
+```bash
+go install github.com/mauricioklein/msgo
+```
+
+# Commands
 
 ## Create Architecture
 
 ```bash
-ms init <name>
+msgo init <name>
 ```
 ## Create Service
 
 ```bash
-ms  create -n <name> -t service
+msgo  create -n <name> -t service
 ```
 
 ## Create Repository
 
 ```bash
-ms  create -n <name> -t repository
+msgo  create -n <name> -t repository
 ```
 
 ## Create Contract
 
 ```bash
-ms  create -n <name> -t contract
+msgo  create -n <name> -t contract
 ```
 
