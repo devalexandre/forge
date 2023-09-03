@@ -1,4 +1,4 @@
-module github.com/devalexandre/mscli
+module github.com/devalexandre/msgo
 
 go 1.18
 
