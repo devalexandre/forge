@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/devalexandre/mscli/src/internal/architecture"
-	create2 "github.com/devalexandre/mscli/src/internal/create"
+	"github.com/devalexandre/mscli/src/architecture"
+	"github.com/devalexandre/mscli/src/create"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -23,8 +23,8 @@ func main() {
 	Init()
 	rootCmd := cobra.Command{Use: "ms"}
 	rootCmd.AddCommand(architecture.Init())
-	rootCmd.AddCommand(create2.Init())
-	rootCmd.AddCommand(create2.InitAdpters())
+	rootCmd.AddCommand(create.Init())
+	rootCmd.AddCommand(create.InitAdpters())
 
 	rootCmd.Execute()
 }
