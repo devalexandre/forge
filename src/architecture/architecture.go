@@ -13,7 +13,7 @@ import (
 )
 
 func createMicroserviceArchitecture(projectName string, template string) error {
-	log.Infof("Clone template: %v", template)
+	log.Debugf("Clone template: %v", template)
 	cmd := exec.Command("git", "clone", template, projectName)
 	return cmd.Run()
 
@@ -33,7 +33,7 @@ func removeExample(path string) {
 func Init() *cobra.Command {
 	CreateStruct.Flags().StringP("name", "n", "", "Name of the microservice architecture")
 	//flag for example
-	CreateStruct.Flags().BoolP("examples", "e", false, "example for struct")
+	CreateStruct.Flags().BoolP("examples", "e", true, "example for struct")
 
 	CreateStruct.Flags().StringP("template", "t", config.TemplateTDD, "template to use: tdd, ddd, hexagonal")
 
@@ -75,7 +75,7 @@ var CreateStruct = &cobra.Command{
 
 			}
 
-			log.Info("Creating infrastructure for the database...")
+			color.Cyan("Creating infrastructure for the database...")
 			switch db {
 			case 1:
 				folders = []string{"internal/infra/database/pgx", "internal/infra/database/sqlite"}
