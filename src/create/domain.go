@@ -2,8 +2,8 @@ package create
 
 import (
 	"fmt"
+	"github.com/devalexandre/go-forge/src/log"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -39,7 +39,7 @@ var CreateDomain = &cobra.Command{
 		case "mock":
 			createMock(name)
 		default:
-			log.Println("Type not found")
+			log.Printf("Type not found")
 		}
 
 	},
@@ -50,7 +50,7 @@ func updateName(path string, name string) {
 
 	src, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Println(err)
+		log.Errorf(err.Error())
 		return
 	}
 
@@ -62,7 +62,7 @@ func updateName(path string, name string) {
 	//update file
 
 	if ioutil.WriteFile(path, src, 0644) != nil {
-		log.Println(err)
+		log.Errorf(err.Error())
 		return
 	}
 
@@ -72,7 +72,7 @@ func createDomain(name string) {
 	// check if internal folder exists
 	var paths []string
 	if _, err := os.Stat("./internal"); err != nil {
-		log.Println("You need to be in the root of the project")
+		log.Printf("You need to be in the root of the project")
 		return
 	}
 
