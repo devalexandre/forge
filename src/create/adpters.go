@@ -88,7 +88,7 @@ func createAdapter(adapter string) {
 	cmd := exec.Command("mkdir", "-p", fmt.Sprintf("./internal/infra/database/%s", adapter))
 	cmd.Run()
 
-	cmd = exec.Command("curl", "-o", fmt.Sprintf("./internal/infra/database/%s/contracts.go", adapter), fmt.Sprintf("https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/%s/contracts.go", adapter))
+	cmd = exec.Command("curl", "-o", "./internal/infra/database/contracts.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/contracts.go")
 	cmd.Run()
 
 	cmd = exec.Command("curl", "-o", fmt.Sprintf("./internal/infra/database/%s/connection.go", adapter), fmt.Sprintf("https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/%s/connection.go", adapter))
@@ -98,19 +98,19 @@ func createAdapter(adapter string) {
 	cmd.Run()
 
 	//verify if the mocks dir exists
-	if _, err := exec.Command("ls", fmt.Sprintf("./internal/infra/database/%s/mocks", adapter)).Output(); err != nil {
-		cmd = exec.Command("mkdir", "-p", fmt.Sprintf("./internal/infra/database/%s/mocks", adapter))
+	if _, err := exec.Command("ls", "./internal/infra/database/mocks").Output(); err != nil {
+		cmd = exec.Command("mkdir", "-p", "./internal/infra/database/mocks")
 		cmd.Run()
 	}
 
 	// verify if the mocks files exists
-	if _, err := exec.Command("ls", fmt.Sprintf("./internal/infra/database/%s/mocks/connection.go", adapter)).Output(); err != nil {
-		cmd = exec.Command("curl", "-o", fmt.Sprintf("./internal/infra/database/%s/mocks/connection.go", adapter), fmt.Sprintf("https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/%s/mocks/connection.go", adapter))
+	if _, err := exec.Command("ls", "./internal/infra/database/mocks/connection.go").Output(); err != nil {
+		cmd = exec.Command("curl", "-o", "./internal/infra/database/mocks/connection.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/mocks/connection.go")
 		cmd.Run()
 	}
 
-	if _, err := exec.Command("ls", fmt.Sprintf("./internal/infra/database/%s/mocks/db.go", adapter)).Output(); err != nil {
-		cmd = exec.Command("curl", "-o", fmt.Sprintf("./internal/infra/database/%s/mocks/db.go", adapter), fmt.Sprintf("https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/%s/mocks/db.go", adapter))
+	if _, err := exec.Command("ls", "./internal/infra/database/mocks/db.go").Output(); err != nil {
+		cmd = exec.Command("curl", "-o", "./internal/infra/database/mocks/db.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/database/mocks/db.go")
 		cmd.Run()
 	}
 	color.Green(fmt.Sprintf("%s adapter created !!! ", adapter))
