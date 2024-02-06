@@ -1,6 +1,7 @@
 package create
 
 import (
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"log"
 	"os/exec"
@@ -53,5 +54,7 @@ func createPGX() {
 
 	cmd = exec.Command("curl", "-o", "./internal/infra/pgx/mocks/db.go", "https://raw.githubusercontent.com/devalexandre/golang-ddd-template/main/internal/infra/pgx/mocks/db.go")
 	cmd.Run()
+
+	color.Green("pgx adapter created !!! ")
 
 }
