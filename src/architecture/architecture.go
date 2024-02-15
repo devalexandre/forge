@@ -2,8 +2,8 @@ package architecture
 
 import (
 	"fmt"
-	"github.com/devalexandre/go-forge/src/config"
-	"github.com/devalexandre/go-forge/src/log"
+	"github.com/devalexandre/forge/src/config"
+	"github.com/devalexandre/forge/src/log"
 	"github.com/fatih/color"
 
 	"os"
@@ -33,7 +33,7 @@ func removeExample(path string) {
 func Init() *cobra.Command {
 	CreateStruct.Flags().StringP("name", "n", "", "Name of the microservice architecture")
 	//flag for example
-	CreateStruct.Flags().BoolP("examples", "e", true, "example for struct")
+	CreateStruct.Flags().BoolP("initial", "i", true, "initial  struct")
 
 	CreateStruct.Flags().StringP("template", "t", config.TemplateTDD, "template to use: tdd, ddd, hexagonal")
 
@@ -49,7 +49,7 @@ var CreateStruct = &cobra.Command{
 
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
-		examples, _ := cmd.Flags().GetBool("examples")
+		initial, _ := cmd.Flags().GetBool("initial")
 		template, _ := cmd.Flags().GetString("template")
 
 		err := createMicroserviceArchitecture(name, template)
@@ -58,7 +58,37 @@ var CreateStruct = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if examples {
+		var databaseAdapter, userExample bool
+		var hasDatabaseAdapter, hasUserExample string
+		var folders []string
+
+		if initial {
+			color.Magenta("Do you want to create a user example? (y/n) ")
+			_, err := fmt.Scan(&hasUserExample)
+
+			if err != nil {
+				log.Fatalf("Error reading the user's choice: %v", err)
+			}
+
+			if hasUserExample == "y" {
+				userExample = true
+			}
+		}
+
+		if initial {
+			color.Magenta("Do you want to create a database adapter? (y/n) ")
+			_, err := fmt.Scan(&hasDatabaseAdapter)
+
+			if err != nil {
+				log.Fatalf("Error reading the user's choice: %v", err)
+			}
+
+			if hasDatabaseAdapter == "y" {
+				databaseAdapter = true
+			}
+		}
+
+		if databaseAdapter {
 			// question: what database do you want to use?
 			color.Magenta("What database do you want to use? ")
 			color.White("1 - mysql")
@@ -66,7 +96,7 @@ var CreateStruct = &cobra.Command{
 			color.White("3 - sqlite")
 
 			var db int
-			var folders []string
+
 			// get the user's choice
 			_, err := fmt.Scan(&db)
 
@@ -78,13 +108,13 @@ var CreateStruct = &cobra.Command{
 			color.Cyan("Creating infrastructure for the database...")
 			switch db {
 			case 1:
-				folders = []string{"internal/infra/database/pgx", "internal/infra/database/sqlite"}
+				folders = append(folders, "internal/infra/database/pgx", "internal/infra/database/sqlite")
 				break
 			case 2:
-				folders = []string{"internal/infra/database/mysql", "internal/infra/database/sqlite"}
+				folders = append(folders, "internal/infra/database/mysql", "internal/infra/database/sqlite")
 				break
 			case 3:
-				folders = []string{"internal/infra/database/mysql", "internal/infra/database/pgx"}
+				folders = append(folders, "internal/infra/database/mysql", "internal/infra/database/pgx")
 				break
 			default:
 				log.Fatalf("Invalid option: %v", db)
@@ -92,33 +122,20 @@ var CreateStruct = &cobra.Command{
 
 			}
 
-			// remove the folders that the user didn't choose
-			count := 0
-			for {
-
-				for _, folder := range folders {
-					if _, err := os.Stat(fmt.Sprintf("%s/%s", name, folder)); err == nil {
-						removeExample(name + "/" + folder)
-						count++
-					} else {
-						log.Debugf("Folder %s not found", folder)
-						count++
-					}
-
-					if count == len(folders) {
-						// go out of the loop
-						color.Green("Microservice architecture created successfully! %s", name)
-						os.Exit(0)
-					}
-				}
-
-			}
 		}
 
-		if !examples {
+		if !userExample {
+			folders = append(folders, "internal/domain/user")
+		}
+
+		if !databaseAdapter {
+			folders = append(folders, "internal/infra/database")
+		}
+
+		if len(folders) > 0 {
 			count := 0
-			folders := []string{"internal/domain/user", "internal/infra/database"}
-			log.Debugf("Removing examples...")
+
+			log.Debugf("Removing initial...")
 			for {
 
 				//check if internal/infra/mysql and internal/domain/user exists

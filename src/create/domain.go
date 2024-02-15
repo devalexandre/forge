@@ -2,7 +2,7 @@ package create
 
 import (
 	"fmt"
-	"github.com/devalexandre/go-forge/src/log"
+	"github.com/devalexandre/forge/src/log"
 	"io/ioutil"
 	"os"
 	"os/exec"

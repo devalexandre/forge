@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/devalexandre/go-forge/src/architecture"
-	"github.com/devalexandre/go-forge/src/create"
-	"github.com/devalexandre/go-forge/src/log"
+	"github.com/devalexandre/forge/src/architecture"
+	"github.com/devalexandre/forge/src/create"
+	"github.com/devalexandre/forge/src/log"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
@@ -41,7 +41,7 @@ FFFFFFFFFFF           ooooooooooo    rrrrrrr                gggggggg::::::g     
 `
 	art += "\n"
 	art += "Microservice CLI\n"
-	art += "Version: 0.0.3\n"
+	art += "Version: 0.0.4\n"
 	return art
 }
 

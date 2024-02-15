@@ -1,4 +1,4 @@
-module github.com/devalexandre/go-forge
+module github.com/devalexandre/forge
 
 go 1.18
 
